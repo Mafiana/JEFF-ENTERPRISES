@@ -1,20 +1,30 @@
-import { useState, useEffect } from "react";
-import { SV, PR, PJ, TM, FQ, ADDRESS, PHONE } from "./data.jsx";
+import { useState, useEffect, useRef, Component } from "react";
+import { SV, PR, PJ, TM, FQ, ADDRESS, PHONE, MAP_EMBED, MAP_QUERY, REVIEWS_URL } from "./data.jsx";
 import Legal from "./components/Legal.jsx";
 import Wa from "./components/Wa.jsx";
-import MapArt from "./components/MapArt.jsx";
+
+class Eb extends Component{state={e:0};static getDerivedStateFromError(){return{e:1}}render(){return this.state.e?null:this.props.children}}
+const Chev=({d})=><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d={d}/></svg>;
+function Project({list,i,setI,onClose}){const r=useRef(null),p=list[i],n=list.length,go=d=>setI((i+d+n)%n);
+useEffect(()=>{const e=ev=>{if(ev.key==="Escape")onClose();else if(n>1&&ev.key==="ArrowRight")go(1);else if(n>1&&ev.key==="ArrowLeft")go(-1)};window.addEventListener("keydown",e);document.body.style.overflow="hidden";return()=>{window.removeEventListener("keydown",e);document.body.style.overflow=""}},[i]);
+useEffect(()=>{r.current&&r.current.focus()},[]);
+return <div className="mo" onClick={onClose}><div className="md pd" role="dialog" aria-modal="true" aria-labelledby="pt" onClick={e=>e.stopPropagation()}><button ref={r} className="x" onClick={onClose}>Close</button>
+<div className={"pv"+(p[4]?" pi":"")}>{p[4]?<img src={p[4]} alt={p[0]}/>:p[2]}
+{n>1&&<><button className="pn l" aria-label="Previous photo" onClick={()=>go(-1)}><Chev d="M15 5l-7 7 7 7"/></button><button className="pn r" aria-label="Next photo" onClick={()=>go(1)}><Chev d="M9 5l7 7-7 7"/></button></>}</div>
+<h2 id="pt">{p[0]}</h2><p className="up">{p[1]} · {p[3]}{n>1?" · "+(i+1)+" / "+n:""}</p>
+<a className="btn" href="#contact" onClick={onClose}>Request a similar job</a></div></div>}
 
 export default function App(){
-const [sc,setSc]=useState(false),[open,setOpen]=useState(false),[a,setA]=useState(0),[sent,setSent]=useState(false),[legal,setLegal]=useState(null),[cat,setCat]=useState("All"),[theme,setTheme]=useState(()=>{try{const s=localStorage.getItem("theme");if(s)return s}catch(e){}return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"});
+const [sc,setSc]=useState(false),[open,setOpen]=useState(false),[a,setA]=useState(0),[sent,setSent]=useState(false),[legal,setLegal]=useState(null),[pj,setPj]=useState(null),[more,setMore]=useState(false),[cat,setCat]=useState("All"),[theme,setTheme]=useState(()=>{try{const s=localStorage.getItem("theme");if(s)return s}catch(e){}return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"});
 useEffect(()=>{document.documentElement.setAttribute("data-theme",theme);try{localStorage.setItem("theme",theme)}catch(e){}},[theme]);
 useEffect(()=>{const f=()=>setSc(window.scrollY>40);f();window.addEventListener("scroll",f);return()=>window.removeEventListener("scroll",f)},[]);
-const s=SV[a],go=()=>setOpen(false);
+const s=SV[a],go=()=>setOpen(false),fl=PJ.filter(p=>cat==="All"||p[1]===cat),vis=more||fl.length<=6?fl:fl.slice(0,6);
 return <>
 <nav className={sc||open?"s":""}><div className="wrap nb">
-<a className="logo" href="#top"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#7fc4dc" strokeWidth="2.5"><rect x="2" y="2" width="22" height="22"/><path d="M13 2v22M2 13h22"/></svg>Apex Aluminium</a>
+<a className="logo" href="#top"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#7fc4dc" strokeWidth="2.5"><rect x="2" y="2" width="22" height="22"/><path d="M13 2v22M2 13h22"/></svg>Jeff Enterprises</a>
 
 <div className={"nl"+(open?" o":"")}><a href="#services" onClick={go}>Services</a><a href="#projects" onClick={go}>Projects</a><a href="#about" onClick={go}>About</a><a href="#location" onClick={go}>Find us</a><a href="#faq" onClick={go}>FAQ</a><a className="btn" href="#contact" onClick={go}>Get a quote</a></div>
-<div className="tr"><button className="tt" onClick={()=>setTheme(theme==="dark"?"light":"dark")} aria-label={theme==="dark"?"Switch to light mode":"Switch to dark mode"} title={theme==="dark"?"Light mode":"Dark mode"}>{theme==="dark"?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.900 4.900l1.400 1.400M17.700 17.700l1.400 1.400M2 12h2M20 12h2M4.900 19.100l1.400-1.400M17.700 6.300l1.400-1.400"/></svg>:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.800A9 9 0 1 1 11.200 3a7 7 0 0 0 9.800 9.800z"/></svg>}</button><button className="menu" aria-expanded={open} onClick={()=>setOpen(!open)}>{open?"Close":"Menu"}</button></div>
+<div className="tr"><button className="tt" onClick={()=>setTheme(theme==="dark"?"light":"dark")} aria-label={theme==="dark"?"Switch to light mode":"Switch to dark mode"} title={theme==="dark"?"Light mode":"Dark mode"}>{theme==="dark"?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.900 4.900l1.400 1.400M17.700 17.700l1.400 1.400M2 12h2M20 12h2M4.900 19.100l1.400-1.400M17.700 6.300l1.400-1.400"/></svg>:<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.800A9 9 0 1 1 11.200 3a7 7 0 0 0 9.800 9.800z"/></svg>}</button><button className="menu" aria-label={open?"Close menu":"Open menu"} aria-expanded={open} onClick={()=>setOpen(!open)}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">{open?<path d="M5 5l14 14M19 5L5 19"/>:<path d="M4 7h16M4 12h16M4 17h16"/>}</svg></button></div>
 </div></nav>
 <header className="hero" id="top">
 <video autoPlay muted loop playsInline preload="auto" aria-hidden="true"><source src="/hero.mp4" type="video/mp4"/></video>
@@ -46,19 +56,21 @@ return <>
 <section id="projects" style={{background:"var(--surf)"}}><div className="wrap">
 <div className="sh"><h2>Previous jobs.</h2><p>A few of the homes, shops and offices we have fitted out.</p></div>
 <div className="fl" role="group" aria-label="Filter projects">{["All","Windows","Doors","Glass","Partitions","Custom"].map(c=><button key={c} aria-pressed={cat===c} onClick={()=>setCat(c)}>{c}</button>)}</div>
-<div className="pg">{PJ.filter(p=>cat==="All"||p[1]===cat).map(p=><div className="pj" key={p[0]}><figure><div className="im">{p[2]}</div><figcaption><h3>{p[0]}</h3><p>{p[1]} · {p[3]}</p></figcaption></figure></div>)}</div>
+<div className="pg">{vis.map((p,i)=><div className="pj" key={p[0]} onClick={()=>setPj(i)}><figure><div className={"im"+(p[4]?" pf":"")}>{p[4]?<img src={p[4]} alt={p[0]} loading="lazy" style={{objectPosition:p[5]||"50% 50%"}}/>:p[2]}<button className="pp" aria-label={"View details: "+p[0]} onClick={e=>{e.stopPropagation();setPj(i)}}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div><figcaption><h3>{p[0]}</h3><p>{p[1]} · {p[3]}</p></figcaption></figure></div>)}</div>
+{!more&&fl.length>6&&<div className="pm"><button aria-label="Show more photos" onClick={()=>setMore(true)}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg></button><span>More photos</span></div>}
 </div></section>
 <section id="about"><div className="wrap ab">
-<div className="pt" role="img" aria-label="Portrait of Michael Hart, Founder and CEO">MH</div>
+<div className="pt ph"><img src="/ceo.jpg" alt="Portrait of the Founder and CEO" width="800" height="1067" loading="lazy"/></div>
 <div><h2>A word from our CEO.</h2><blockquote>“Aluminium work is a trade of millimetres. Get the measurements and the finish right, and the job lasts for decades.”</blockquote><p>I started this company to give customers a team that turns up when it says it will, builds what was quoted and leaves the site clean. Every window, door and partition that leaves our workshop carries that promise.</p><p className="nm">Michael Hart<span>Founder and CEO</span></p></div>
 </div></section>
-<section className="dk" id="reviews"><div className="wrap">
-<div className="sh"><h2>What our customers say.</h2><p>Real jobs, real feedback.</p></div>
-<div className="tg">{TM.map(t=><blockquote key={t[0]}><div className="st" aria-label="5 out of 5 stars">★★★★★</div><q>“{t[0]}”</q><cite><b>{t[1]}</b>{t[2]}</cite></blockquote>)}</div>
+<section className="rv" id="reviews"><div className="wrap">
+<div className="rh"><h2>What our customers say.</h2><p>Real jobs, real feedback.</p></div>
+<div className="rg">{TM.map(t=><figure className="rc" key={t[0]}><span className="av">{t[3]?<img src={t[3]} alt=""/>:<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="9" r="4"/><path d="M4 21c0-4.400 3.600-7 8-7s8 2.600 8 7z"/></svg>}</span><div className="st" role="img" aria-label="5 out of 5 stars">★★★★★</div><blockquote>“{t[0]}”</blockquote><figcaption><b>{t[1]}</b><span>{t[2]}</span></figcaption></figure>)}</div>
+{REVIEWS_URL&&<div className="rf"><a className="btn" href={REVIEWS_URL} target="_blank" rel="noopener noreferrer">View more reviews</a></div>}
 </div></section>
 <section id="location"><div className="wrap"><div className="mw">
-<div className="mi"><h2>Visit our workshop.</h2><p><b>Address</b><br/>{ADDRESS}</p><p><b>Phone</b><br/><a href={"tel:"+PHONE.replace(/ /g,"")}>{PHONE}</a></p><p><b>Hours</b><br/>Monday to Saturday, 8:00 to 17:00</p><a className="btn" href={"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(ADDRESS)} target="_blank" rel="noopener noreferrer">Get directions</a></div>
-<MapArt/></div></div></section>
+<div className="mi"><h2>Visit our workshop.</h2><p><b>Address</b><br/>{ADDRESS}</p><p><b>Phone</b><br/><a href={"tel:"+PHONE.replace(/ /g,"")}>{PHONE}</a></p><p><b>Hours</b><br/>Monday to Saturday, 8:00 to 17:00</p><a className="btn" href={"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(MAP_QUERY)} target="_blank" rel="noopener noreferrer">Get directions</a></div>
+<iframe className="mm" src={MAP_EMBED||"https://maps.google.com/maps?q="+encodeURIComponent(MAP_QUERY)+"&output=embed"} title="Map showing our workshop location" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen/></div></div></section>
 <section id="faq" style={{background:"var(--surf)"}}><div className="wrap fq">
 <div><h2>Questions, answered.</h2><p className="m">Can’t find what you need? Message us on WhatsApp and we’ll reply quickly.</p></div>
 <div>{FQ.map(f=><details key={f[0]}><summary>{f[0]}</summary><p>{f[1]}</p></details>)}</div>
@@ -73,6 +85,6 @@ return <>
 <label>Project details<textarea name="d" rows="4" placeholder="Sizes, location, timeline…"></textarea></label>
 <button className="btn" type="submit">Request a quote</button></form>}
 </div></section>
-<footer><div className="wrap"><span>© 2026 Apex Aluminium. All rights reserved.</span><div className="fk"><button onClick={()=>setLegal("privacy")}>Privacy policy</button><button onClick={()=>setLegal("terms")}>Terms and conditions</button></div></div></footer>
-<Wa/>{legal&&<Legal k={legal} onClose={()=>setLegal(null)}/>}
+<footer><div className="wrap"><span>© 2026 Jeff Enterprises. All rights reserved.</span><div className="fk"><button onClick={()=>setLegal("privacy")}>Privacy policy</button><button onClick={()=>setLegal("terms")}>Terms and conditions</button></div></div></footer>
+<Wa/>{legal&&<Legal k={legal} onClose={()=>setLegal(null)}/>}{pj!==null&&fl[pj]&&<Eb key={pj}><Project list={fl} i={pj} setI={setPj} onClose={()=>setPj(null)}/></Eb>}
 </>}

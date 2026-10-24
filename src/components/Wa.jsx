@@ -1,9 +1,9 @@
 import { useState, useRef } from "react";
-import { WA_NUMBER } from "../data.jsx";
+import { WA_LINK } from "../data.jsx";
 
 export default function Wa(){const [p,setP]=useState(null),r=useRef(null),d=useRef({});
 const down=e=>{const b=r.current.getBoundingClientRect();d.current={sx:e.clientX,sy:e.clientY,ox:b.left,oy:b.top,m:false};r.current.setPointerCapture(e.pointerId)};
 const move=e=>{const s=d.current;if(s.sx===undefined||!r.current.hasPointerCapture(e.pointerId))return;const dx=e.clientX-s.sx,dy=e.clientY-s.sy;if(!s.m&&Math.hypot(dx,dy)<6)return;s.m=true;setP({x:Math.min(Math.max(s.ox+dx,8),window.innerWidth-68),y:Math.min(Math.max(s.oy+dy,8),window.innerHeight-68)})};
 const up=e=>{const s=d.current;if(s.m&&p){setP({x:p.x+30<window.innerWidth/2?12:window.innerWidth-72,y:p.y})}d.current={sx:undefined,m:s.m};};
-const click=()=>{if(d.current.m){d.current.m=false;return}window.open("https://wa.me/"+WA_NUMBER+"?text="+encodeURIComponent("Hello, I’d like a quote for aluminium work."),"_blank","noopener")};
+const click=()=>{if(d.current.m){d.current.m=false;return}window.open(WA_LINK,"_blank","noopener")};
 return <button ref={r} className="wa" aria-label="Chat with us on WhatsApp (drag to move)" title="Chat on WhatsApp. Drag to move." style={p?{left:p.x,top:p.y,right:"auto",bottom:"auto",transition:d.current.sx===undefined?"left .2s":"none"}:undefined} onPointerDown={down} onPointerMove={move} onPointerUp={up} onClick={click}><svg viewBox="0 0 32 32" fill="currentColor"><path d="M16 3C9 3 3.3 8.6 3.3 15.5c0 2.3.6 4.4 1.7 6.3L3 29l7.4-1.9c1.8 1 3.6 1.5 5.6 1.5 7 0 12.7-5.6 12.7-12.5S23 3 16 3zm0 22.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-4.4 1.1 1.2-4.2-.3-.4a10 10 0 0 1-1.6-5.4C5.5 10 10.2 5.500 16 5.500S26.500 10 26.500 15.500 21.800 25.800 16 25.800zm5.800-7.600c-.3-.2-1.900-.9-2.200-1s-.5-.2-.7.200-.8 1-1 1.200-.4.200-.7.100a8.600 8.600 0 0 1-4.300-3.700c-.3-.6.300-.5.900-1.700.1-.2 0-.4 0-.5l-1-2.300c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.100-.8.400s-1 1-1 2.500 1.100 2.900 1.200 3.100c.2.200 2.100 3.300 5.200 4.500 2 .8 2.800.9 3.800.7.600-.1 1.900-.8 2.100-1.500.3-.7.300-1.400.2-1.500l-.6-.3z"/></svg></button>}
