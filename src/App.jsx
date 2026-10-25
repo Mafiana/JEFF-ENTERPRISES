@@ -1,21 +1,29 @@
 import { useState, useEffect, useRef, Component } from "react";
-import { SV, PR, PJ, TM, FQ, ADDRESS, PHONE, MAP_EMBED, MAP_QUERY, REVIEWS_URL } from "./data.jsx";
+import { SV, PR, PJ, TM, FQ, ADDRESS, PHONE, MAP_EMBED, MAP_QUERY, MAP_COORDS, MAP_LINK, REVIEWS_URL, ADS } from "./data.jsx";
 import Legal from "./components/Legal.jsx";
 import Wa from "./components/Wa.jsx";
 
 class Eb extends Component{state={e:0};static getDerivedStateFromError(){return{e:1}}render(){return this.state.e?null:this.props.children}}
-const Chev=({d})=><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d={d}/></svg>;
-function Project({list,i,setI,onClose}){const r=useRef(null),p=list[i],n=list.length,go=d=>setI((i+d+n)%n);
+function BA({before,after,alt}){const [x,setX]=useState(50),r=useRef(null),d=useRef(false),cl=v=>Math.min(100,Math.max(0,v));
+const set=cx=>{const b=r.current.getBoundingClientRect();setX(cl((cx-b.left)/b.width*100))};
+const key=e=>{const k=e.key;let v=x;if(k==="ArrowLeft")v=x-5;else if(k==="ArrowRight")v=x+5;else if(k==="Home")v=0;else if(k==="End")v=100;else return;e.preventDefault();e.stopPropagation();setX(cl(v))};
+return <div className="ba" ref={r} onPointerDown={e=>{d.current=true;e.currentTarget.setPointerCapture(e.pointerId);set(e.clientX)}} onPointerMove={e=>{if(d.current)set(e.clientX)}} onPointerUp={()=>{d.current=false}} onPointerCancel={()=>{d.current=false}}>
+<img src={after} alt={alt+" (after)"} draggable="false"/>
+<img src={before} alt={alt+" (before)"} draggable="false" style={{clipPath:"inset(0 "+(100-x)+"% 0 0)"}}/>
+<span className="bl l">Before</span><span className="bl r">After</span>
+<div className="bh" style={{left:x+"%"}} role="slider" tabIndex={0} aria-label="Drag to compare before and after" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(x)} onKeyDown={key}><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg></span></div></div>}
+function AdZoom({ad,onClose}){useEffect(()=>{const e=ev=>{if(ev.key==="Escape")onClose()};window.addEventListener("keydown",e);document.body.style.overflow="hidden";return()=>{window.removeEventListener("keydown",e);document.body.style.overflow=""}},[]);
+return <div className="mo adz" role="dialog" aria-modal="true" aria-label="Advertisement enlarged" onClick={onClose}><img src={ad.src} alt={ad.alt}/><button className="x" onClick={onClose}>Close</button></div>}
+function Project({list,i,setI,onClose}){const r=useRef(null),sx=useRef(0),p=list[i],n=list.length,go=d=>setI((i+d+n)%n);
 useEffect(()=>{const e=ev=>{if(ev.key==="Escape")onClose();else if(n>1&&ev.key==="ArrowRight")go(1);else if(n>1&&ev.key==="ArrowLeft")go(-1)};window.addEventListener("keydown",e);document.body.style.overflow="hidden";return()=>{window.removeEventListener("keydown",e);document.body.style.overflow=""}},[i]);
 useEffect(()=>{r.current&&r.current.focus()},[]);
 return <div className="mo" onClick={onClose}><div className="md pd" role="dialog" aria-modal="true" aria-labelledby="pt" onClick={e=>e.stopPropagation()}><button ref={r} className="x" onClick={onClose}>Close</button>
-<div className={"pv"+(p[4]?" pi":"")}>{p[4]?<img src={p[4]} alt={p[0]}/>:p[2]}
-{n>1&&<><button className="pn l" aria-label="Previous photo" onClick={()=>go(-1)}><Chev d="M15 5l-7 7 7 7"/></button><button className="pn r" aria-label="Next photo" onClick={()=>go(1)}><Chev d="M9 5l7 7-7 7"/></button></>}</div>
+<div className={"pv"+(p[6]?" pa":p[4]?" pi":"")} onTouchStart={e=>{sx.current=e.touches[0].clientX}} onTouchEnd={e=>{if(p[6]||n<2)return;const dx=e.changedTouches[0].clientX-sx.current;if(Math.abs(dx)>50)go(dx<0?1:-1)}}>{p[6]?<BA key={p[0]} before={p[6]} after={p[4]} alt={p[0]}/>:p[4]?<img src={p[4]} alt={p[0]}/>:p[2]}</div>
 <h2 id="pt">{p[0]}</h2><p className="up">{p[1]} · {p[3]}{n>1?" · "+(i+1)+" / "+n:""}</p>
 <a className="btn" href="#contact" onClick={onClose}>Request a similar job</a></div></div>}
 
 export default function App(){
-const [sc,setSc]=useState(false),[open,setOpen]=useState(false),[a,setA]=useState(0),[sent,setSent]=useState(false),[legal,setLegal]=useState(null),[pj,setPj]=useState(null),[more,setMore]=useState(false),[cat,setCat]=useState("All"),[theme,setTheme]=useState(()=>{try{const s=localStorage.getItem("theme");if(s)return s}catch(e){}return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"});
+const [sc,setSc]=useState(false),[open,setOpen]=useState(false),[a,setA]=useState(0),[sent,setSent]=useState(false),[legal,setLegal]=useState(null),[pj,setPj]=useState(null),[more,setMore]=useState(false),[adz,setAdz]=useState(null),[cat,setCat]=useState("All"),[theme,setTheme]=useState(()=>{try{const s=localStorage.getItem("theme");if(s)return s}catch(e){}return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"});
 useEffect(()=>{document.documentElement.setAttribute("data-theme",theme);try{localStorage.setItem("theme",theme)}catch(e){}},[theme]);
 useEffect(()=>{const f=()=>setSc(window.scrollY>40);f();window.addEventListener("scroll",f);return()=>window.removeEventListener("scroll",f)},[]);
 const s=SV[a],go=()=>setOpen(false),fl=PJ.filter(p=>cat==="All"||p[1]===cat),vis=more||fl.length<=6?fl:fl.slice(0,6);
@@ -56,21 +64,24 @@ return <>
 <section id="projects" style={{background:"var(--surf)"}}><div className="wrap">
 <div className="sh"><h2>Previous jobs.</h2><p>A few of the homes, shops and offices we have fitted out.</p></div>
 <div className="fl" role="group" aria-label="Filter projects">{["All","Windows","Doors","Glass","Partitions","Custom"].map(c=><button key={c} aria-pressed={cat===c} onClick={()=>setCat(c)}>{c}</button>)}</div>
-<div className="pg">{vis.map((p,i)=><div className="pj" key={p[0]} onClick={()=>setPj(i)}><figure><div className={"im"+(p[4]?" pf":"")}>{p[4]?<img src={p[4]} alt={p[0]} loading="lazy" style={{objectPosition:p[5]||"50% 50%"}}/>:p[2]}<button className="pp" aria-label={"View details: "+p[0]} onClick={e=>{e.stopPropagation();setPj(i)}}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div><figcaption><h3>{p[0]}</h3><p>{p[1]} · {p[3]}</p></figcaption></figure></div>)}</div>
+<div className="pg">{vis.map((p,i)=><div className="pj" key={p[0]} onClick={()=>setPj(i)}><figure><div className={"im"+(p[4]?" pf":"")}>{p[4]?<img src={p[4]} alt={p[0]} loading="lazy" style={{objectPosition:p[5]||"50% 50%"}}/>:p[2]}{p[6]&&<span className="pb">Before / After</span>}<button className="pp" aria-label={"View details: "+p[0]} onClick={e=>{e.stopPropagation();setPj(i)}}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div><figcaption><h3>{p[0]}</h3><p>{p[1]} · {p[3]}</p></figcaption></figure></div>)}</div>
 {!more&&fl.length>6&&<div className="pm"><button aria-label="Show more photos" onClick={()=>setMore(true)}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg></button><span>More photos</span></div>}
 </div></section>
 <section id="about"><div className="wrap ab">
 <div className="pt ph"><img src="/ceo.jpg" alt="Portrait of the Founder and CEO" width="800" height="1067" loading="lazy"/></div>
-<div><h2>A word from our CEO.</h2><blockquote>“Aluminium work is a trade of millimetres. Get the measurements and the finish right, and the job lasts for decades.”</blockquote><p>I started this company to give customers a team that turns up when it says it will, builds what was quoted and leaves the site clean. Every window, door and partition that leaves our workshop carries that promise.</p><p className="nm">Michael Hart<span>Founder and CEO</span></p></div>
+<div><h2>A word from our CEO.</h2><blockquote>“Aluminium work is a trade of millimetres. Get the measurements and the finish right, and the job lasts for decades.”</blockquote><p>I started this company to give customers a team that turns up when it says it will, builds what was quoted and leaves the site clean. Every window, door and partition that leaves our workshop carries that promise.</p><p className="nm">JEFFERY UCHE EMMANUEL<span>Founder and CEO</span></p></div>
 </div></section>
 <section className="rv" id="reviews"><div className="wrap">
 <div className="rh"><h2>What our customers say.</h2><p>Real jobs, real feedback.</p></div>
 <div className="rg">{TM.map(t=><figure className="rc" key={t[0]}><span className="av">{t[3]?<img src={t[3]} alt=""/>:<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="9" r="4"/><path d="M4 21c0-4.400 3.600-7 8-7s8 2.600 8 7z"/></svg>}</span><div className="st" role="img" aria-label="5 out of 5 stars">★★★★★</div><blockquote>“{t[0]}”</blockquote><figcaption><b>{t[1]}</b><span>{t[2]}</span></figcaption></figure>)}</div>
 {REVIEWS_URL&&<div className="rf"><a className="btn" href={REVIEWS_URL} target="_blank" rel="noopener noreferrer">View more reviews</a></div>}
 </div></section>
+{ADS.length>0&&<section className="dk ad" id="ads"><div className="wrap"><div className="adh"><span>Advertisement</span></div>
+<div className="adg">{ADS.map(a=><button className="adc" key={a.src} aria-label="Enlarge advertisement" onClick={()=>setAdz(a)}><img src={a.src} alt={a.alt} loading="lazy"/></button>)}</div>
+<p className="adn">Tap the advertisement to enlarge it</p></div></section>}
 <section id="location"><div className="wrap"><div className="mw">
-<div className="mi"><h2>Visit our workshop.</h2><p><b>Address</b><br/>{ADDRESS}</p><p><b>Phone</b><br/><a href={"tel:"+PHONE.replace(/ /g,"")}>{PHONE}</a></p><p><b>Hours</b><br/>Monday to Saturday, 8:00 to 17:00</p><a className="btn" href={"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(MAP_QUERY)} target="_blank" rel="noopener noreferrer">Get directions</a></div>
-<iframe className="mm" src={MAP_EMBED||"https://maps.google.com/maps?q="+encodeURIComponent(MAP_QUERY)+"&output=embed"} title="Map showing our workshop location" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen/></div></div></section>
+<div className="mi"><h2>Visit our workshop.</h2><p><b>Address</b><br/>{ADDRESS}</p><p><b>Phone</b><br/><a href={"tel:"+PHONE.replace(/ /g,"")}>{PHONE}</a></p><p><b>Hours</b><br/>Monday to Saturday, 8:00 to 17:00</p><a className="btn" href={MAP_LINK||"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(MAP_QUERY)} target="_blank" rel="noopener noreferrer">Get directions</a></div>
+<iframe className="mm" src={MAP_EMBED||"https://maps.google.com/maps?q="+encodeURIComponent(MAP_COORDS||MAP_QUERY)+"&ie=UTF8&iwloc=&hl=en&z=17&output=embed"} title="Map showing our workshop location" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen/></div></div></section>
 <section id="faq" style={{background:"var(--surf)"}}><div className="wrap fq">
 <div><h2>Questions, answered.</h2><p className="m">Can’t find what you need? Message us on WhatsApp and we’ll reply quickly.</p></div>
 <div>{FQ.map(f=><details key={f[0]}><summary>{f[0]}</summary><p>{f[1]}</p></details>)}</div>
@@ -86,5 +97,5 @@ return <>
 <button className="btn" type="submit">Request a quote</button></form>}
 </div></section>
 <footer><div className="wrap"><span>© 2026 Jeff Enterprises. All rights reserved.</span><div className="fk"><button onClick={()=>setLegal("privacy")}>Privacy policy</button><button onClick={()=>setLegal("terms")}>Terms and conditions</button></div></div></footer>
-<Wa/>{legal&&<Legal k={legal} onClose={()=>setLegal(null)}/>}{pj!==null&&fl[pj]&&<Eb key={pj}><Project list={fl} i={pj} setI={setPj} onClose={()=>setPj(null)}/></Eb>}
+<Wa/>{legal&&<Legal k={legal} onClose={()=>setLegal(null)}/>}{adz&&<Eb key="adz"><AdZoom ad={adz} onClose={()=>setAdz(null)}/></Eb>}{pj!==null&&fl[pj]&&<Eb key={pj}><Project list={fl} i={pj} setI={setPj} onClose={()=>setPj(null)}/></Eb>}
 </>}
