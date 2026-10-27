@@ -47,14 +47,13 @@ export const PJ=[
 ["Dark-glass windows on a block house","Windows",Win,"Installed","/jobs/block-house-windows.jpg","50% 45%"],
 ["Grey aluminium panel doors","Doors",Door,"Fabricated","/jobs/grey-panel-doors.jpg","50% 50%"],
 ["Grey aluminium double glass door","Doors",Door,"Installed","/jobs/grey-double-door.jpg","50% 52%"],
+["Aluminium composite panel doors","Doors",Door,"Fabricated","/jobs/composite-doors.jpg","50% 45%"],
 ["Tinted glass display cabinet","Custom",Cus,"Fabricated","/jobs/display-cabinet.jpg","50% 68%"],
+["Glass display counter with lift-up lid","Custom",Cus,"Fabricated","/jobs/glass-counter.jpg","50% 42%"],
 ["Tall tinted glass showcase","Custom",Cus,"Fabricated","/jobs/showcase-tall.jpg","50% 45%"],
 ["Fitting tinted glass in the workshop","Glass",Glass,"Fabricated","/jobs/workshop-glass.jpg","50% 40%"],
-["Shopfront with glass entrance doors","Doors",Door,"Retail"],
-["Glass balustrade with patch fittings","Glass",Glass,"Residential"],
-["Open-plan office with meeting rooms","Partitions",Off,"Commercial"],
-["Frosted living room divider","Partitions",Part,"Residential"],
-["Arched entrance with canopy","Custom",Cus,"Commercial"]
+["Arched entrance with canopy","Custom",Cus,"Commercial","/jobs/canopy-1.jpg","50% 40%"],
+["Arched canopy over a doorway","Custom",Cus,"Commercial","/jobs/canopy-2.jpg","50% 45%"]
 ];
 export const TM=[["They measured, quoted and installed exactly as promised. The windows fit perfectly and the house is noticeably quieter.","Homeowner","Villa project","/customer-homeowner.jpg"],["Our office partitions went up over a weekend with almost no mess. The finish is sharp and our staff love the meeting rooms.","Office manager","Office fit-out","/customer-office.jpg"],["Good communication, fair price and a clean job. We have already asked them to quote for our second shop.","Shop owner","Shopfront doors","/customer-shop.jpg"]];
 export const LG={privacy:{t:"Privacy policy",s:[["What we collect","When you request a quote, we collect your name, phone number, email address and the project details you give us. We do not collect payment details through this website."],["How we use it","We use your information only to reply to your enquiry, prepare quotes, arrange site visits and deliver the work you ask for."],["Sharing","We do not sell your information. We share it only with people who help us complete your job, such as installers, or where the law requires it."],["Messaging apps","If you contact us through WhatsApp, your messages are handled under WhatsApp’s own terms and privacy policy."],["Keeping and deleting","We keep enquiry and job records for as long as needed to serve you and meet legal duties. You can ask us to see, correct or delete your information at any time."],["Contact","For any privacy question, call or message us using the details in the Contact section."]]},terms:{t:"Terms and conditions",s:[["Quotes","Quotes are valid for 30 days from the date issued. Prices may change if the size, materials or scope of work change after the quote."],["Measurements","We take final measurements on site. Items are made to those measurements, so custom orders cannot be returned once fabrication has started."],["Payment","A deposit may be required before fabrication begins. The balance is due on completion unless the written quote says otherwise."],["Timelines","Dates we give are estimates. Weather, site access and material supply can affect them, and we will tell you promptly if a date changes."],["Workmanship guarantee","We stand behind our workmanship. Any guarantee period and its conditions are stated in your written quote. It does not cover damage from misuse, accidents or changes made by others."],["Site access","You agree to give safe access to the site and clear the work area before installation."],["Liability","Our liability is limited to the value of the work carried out, to the extent the law allows."],["Changes","We may update these terms from time to time. The version in your signed quote applies to your job."]]}};
@@ -65,3 +64,7 @@ export const FQ=[["Do you offer free site visits and quotes?","Yes. We visit the
 export const ADS=[
 {src:"/ads/sunday-john-tiler.jpg",alt:"Advertisement: Sunday John, Tiler. Quality tiling for a better tomorrow. Floor and wall tiling, ceramic and porcelain tiles, kitchen and bathroom tiling, house and office tiling, repairs and refurbishment. WhatsApp 07043990438, call 09118447125. Living at Zian."}
 ];
+
+// Previous jobs: cards that only have a drawing (no photo) are hidden while this is false, so the site shows real work only.
+// Set to true to show the drawing placeholders again. A tab such as Partitions appears automatically once a job in it has a photo.
+export const SHOW_PLACEHOLDERS=false;
