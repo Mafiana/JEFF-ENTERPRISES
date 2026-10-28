@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, Component } from "react";
-import { SV, PR, PJ, TM, FQ, ADDRESS, PHONE, MAP_EMBED, MAP_QUERY, MAP_COORDS, MAP_LINK, REVIEWS_URL, ADS } from "./data.jsx";
+import { SV, PR, PJ, TM, FQ, ADDRESS, PHONE, MAP_EMBED, MAP_QUERY, MAP_COORDS, MAP_LINK, REVIEWS_URL, ADS, SHOW_PLACEHOLDERS, WA_LINK } from "./data.jsx";
 import Legal from "./components/Legal.jsx";
-import Wa from "./components/Wa.jsx";
 
 class Eb extends Component{state={e:0};static getDerivedStateFromError(){return{e:1}}render(){return this.state.e?null:this.props.children}}
 function BA({before,after,alt}){const [x,setX]=useState(50),r=useRef(null),d=useRef(false),cl=v=>Math.min(100,Math.max(0,v));
@@ -23,10 +22,11 @@ return <div className="mo" onClick={onClose}><div className="md pd" role="dialog
 <a className="btn" href="#contact" onClick={onClose}>Request a similar job</a></div></div>}
 
 export default function App(){
-const [sc,setSc]=useState(false),[open,setOpen]=useState(false),[a,setA]=useState(0),[sent,setSent]=useState(false),[legal,setLegal]=useState(null),[pj,setPj]=useState(null),[more,setMore]=useState(false),[adz,setAdz]=useState(null),[cat,setCat]=useState("All"),[theme,setTheme]=useState(()=>{try{const s=localStorage.getItem("theme");if(s)return s}catch(e){}return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"});
+const [sc,setSc]=useState(false),[open,setOpen]=useState(false),[a,setA]=useState(0),[legal,setLegal]=useState(null),[pj,setPj]=useState(null),[ext,setExt]=useState(0),[mob,setMob]=useState(()=>window.matchMedia("(max-width:860px)").matches),[adz,setAdz]=useState(null),[cat,setCat]=useState("All"),[theme,setTheme]=useState(()=>{try{const s=localStorage.getItem("theme");if(s)return s}catch(e){}return window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"});
 useEffect(()=>{document.documentElement.setAttribute("data-theme",theme);try{localStorage.setItem("theme",theme)}catch(e){}},[theme]);
 useEffect(()=>{const f=()=>setSc(window.scrollY>40);f();window.addEventListener("scroll",f);return()=>window.removeEventListener("scroll",f)},[]);
-const s=SV[a],go=()=>setOpen(false),fl=PJ.filter(p=>cat==="All"||p[1]===cat),vis=more||fl.length<=6?fl:fl.slice(0,6);
+const s=SV[a],go=()=>setOpen(false),pjs=PJ.filter(p=>p[4]||SHOW_PLACEHOLDERS),cats=["All","Windows","Doors","Glass","Partitions","Custom"].filter(c=>c==="All"||pjs.some(p=>p[1]===c)),fl=pjs.filter(p=>cat==="All"||p[1]===cat),step=mob?4:6,vis=fl.slice(0,step*(1+ext)),rest=fl.length-vis.length;
+useEffect(()=>{const m=window.matchMedia("(max-width:860px)"),f=()=>setMob(m.matches);m.addEventListener("change",f);return()=>m.removeEventListener("change",f)},[]);
 return <>
 <nav className={sc||open?"s":""}><div className="wrap nb">
 <a className="logo" href="#top"><svg width="26" height="26" viewBox="0 0 26 26" fill="none" stroke="#7fc4dc" strokeWidth="2.5"><rect x="2" y="2" width="22" height="22"/><path d="M13 2v22M2 13h22"/></svg>Jeff Enterprises</a>
@@ -63,9 +63,9 @@ return <>
 </div></div></section>
 <section id="projects" style={{background:"var(--surf)"}}><div className="wrap">
 <div className="sh"><h2>Previous jobs.</h2><p>A few of the homes, shops and offices we have fitted out.</p></div>
-<div className="fl" role="group" aria-label="Filter projects">{["All","Windows","Doors","Glass","Partitions","Custom"].map(c=><button key={c} aria-pressed={cat===c} onClick={()=>setCat(c)}>{c}</button>)}</div>
+<div className="fl" role="group" aria-label="Filter projects">{cats.map(c=><button key={c} aria-pressed={cat===c} onClick={()=>{setCat(c);setExt(0)}}>{c}</button>)}</div>
 <div className="pg">{vis.map((p,i)=><div className="pj" key={p[0]} onClick={()=>setPj(i)}><figure><div className={"im"+(p[4]?" pf":"")}>{p[4]?<img src={p[4]} alt={p[0]} loading="lazy" style={{objectPosition:p[5]||"50% 50%"}}/>:p[2]}{p[6]&&<span className="pb">Before / After</span>}<button className="pp" aria-label={"View details: "+p[0]} onClick={e=>{e.stopPropagation();setPj(i)}}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg></button></div><figcaption><h3>{p[0]}</h3><p>{p[1]} · {p[3]}</p></figcaption></figure></div>)}</div>
-{!more&&fl.length>6&&<div className="pm"><button aria-label="Show more photos" onClick={()=>setMore(true)}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg></button><span>More photos</span></div>}
+{fl.length>step&&<div className="pm"><button aria-label={rest>0?"Show more jobs":"Show fewer jobs"} onClick={()=>{if(rest>0)setExt(ext+1);else{setExt(0);const el=document.getElementById("projects");el&&el.scrollIntoView({behavior:"smooth",block:"start"})}}}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">{rest>0?<path d="M12 5v14M5 12h14"/>:<path d="M5 12h14"/>}</svg></button><span>{rest>0?"Showing "+vis.length+" of "+fl.length:"All "+fl.length+" shown"}</span></div>}
 </div></section>
 <section id="about"><div className="wrap ab">
 <div className="pt ph"><img src="/ceo.jpg" alt="Portrait of the Founder and CEO" width="800" height="1067" loading="lazy"/></div>
@@ -87,15 +87,12 @@ return <>
 <div>{FQ.map(f=><details key={f[0]}><summary>{f[0]}</summary><p>{f[1]}</p></details>)}</div>
 </div></section>
 <section className="dk" id="contact"><div className="wrap ct">
-<div><h2>Tell us what you need built.</h2><p className="m">Send the details and we’ll get back to you with a free quote. Site visits arranged on request.</p></div>
-{sent?<div className="ok" role="status">Thanks, we’ve got your request.<span>We’ll contact you shortly to discuss your project.</span></div>:
-<form onSubmit={e=>{e.preventDefault();setSent(true)}}>
-<div className="r2"><label>Name<input required name="n" autoComplete="name"/></label><label>Phone<input required name="p" type="tel" autoComplete="tel"/></label></div>
-<label>Email<input name="e" type="email" autoComplete="email"/></label>
-<label>What do you need?<select name="s">{SV.map(x=><option key={x.n}>{x.n}</option>)}</select></label>
-<label>Project details<textarea name="d" rows="4" placeholder="Sizes, location, timeline…"></textarea></label>
-<button className="btn" type="submit">Request a quote</button></form>}
-</div></section>
+<div><h2>Tell us what you need built.</h2><p className="m">Message or call us and we’ll get back to you with a free quote. Site visits arranged on request.</p>
+<ul className="ck"><li>What you need (windows, doors, glass…)</li><li>Rough sizes, if you have them</li><li>Your location</li><li>A photo of the opening or room</li></ul></div>
+<div className="wc"><div className="wh"><span className="wv"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true"><rect x="3" y="3" width="20" height="20"/><path d="M13 3v20M3 13h20"/></svg></span><div><b>Jeff Enterprises</b><span><i className="dot"/>Aluminium works · Ubulu Okiti</span></div><span className="wi"><svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16 3C9 3 3.3 8.6 3.3 15.5c0 2.3.6 4.4 1.7 6.3L3 29l7.4-1.9c1.8 1 3.6 1.5 5.6 1.5 7 0 12.7-5.6 12.7-12.5S23 3 16 3zm0 22.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-4.4 1.1 1.2-4.2-.3-.4a10 10 0 0 1-1.6-5.4C5.5 10 10.2 5.500 16 5.500S26.500 10 26.500 15.500 21.800 25.800 16 25.800zm5.800-7.600c-.3-.2-1.900-.9-2.200-1s-.5-.2-.7.200-.8 1-1 1.200-.4.200-.7.100a8.600 8.600 0 0 1-4.300-3.700c-.3-.6.300-.5.900-1.700.1-.2 0-.4 0-.5l-1-2.300c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.100-.8.400s-1 1-1 2.500 1.100 2.900 1.200 3.100c.2.200 2.100 3.300 5.200 4.500 2 .8 2.800.9 3.800.7.600-.1 1.900-.8 2.100-1.500.3-.7.300-1.400.2-1.500l-.6-.3z"/></svg></span></div>
+<div className="wm"><p className="b1">Hello! Tell us what you need built and where.</p><p className="b2">Hello Jeff Enterprises, I’d like a quote for aluminium windows and doors.<small>Tap below to chat on WhatsApp ✓✓</small></p></div>
+<a className="wb" href={WA_LINK} target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16 3C9 3 3.3 8.6 3.3 15.5c0 2.3.6 4.4 1.7 6.3L3 29l7.4-1.9c1.8 1 3.6 1.5 5.6 1.5 7 0 12.7-5.6 12.7-12.5S23 3 16 3zm0 22.8c-1.8 0-3.5-.5-5-1.4l-.4-.2-4.4 1.1 1.2-4.2-.3-.4a10 10 0 0 1-1.6-5.4C5.5 10 10.2 5.500 16 5.500S26.500 10 26.500 15.500 21.800 25.800 16 25.800zm5.800-7.600c-.3-.2-1.900-.9-2.200-1s-.5-.2-.7.200-.8 1-1 1.200-.4.200-.7.100a8.600 8.600 0 0 1-4.300-3.700c-.3-.6.300-.5.900-1.700.1-.2 0-.4 0-.5l-1-2.300c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.5.100-.8.400s-1 1-1 2.500 1.100 2.900 1.200 3.100c.2.200 2.100 3.300 5.200 4.500 2 .8 2.800.9 3.800.7.600-.1 1.900-.8 2.100-1.500.3-.7.300-1.400.2-1.500l-.6-.3z"/></svg>Chat on WhatsApp</a>
+<p className="wf">Free quote · Site visits on request</p></div></div></section>
 <footer><div className="wrap"><span>© 2026 Jeff Enterprises. All rights reserved.</span><div className="fk"><button onClick={()=>setLegal("privacy")}>Privacy policy</button><button onClick={()=>setLegal("terms")}>Terms and conditions</button></div></div></footer>
-<Wa/>{legal&&<Legal k={legal} onClose={()=>setLegal(null)}/>}{adz&&<Eb key="adz"><AdZoom ad={adz} onClose={()=>setAdz(null)}/></Eb>}{pj!==null&&fl[pj]&&<Eb key={pj}><Project list={fl} i={pj} setI={setPj} onClose={()=>setPj(null)}/></Eb>}
+{legal&&<Legal k={legal} onClose={()=>setLegal(null)}/>}{adz&&<Eb key="adz"><AdZoom ad={adz} onClose={()=>setAdz(null)}/></Eb>}{pj!==null&&fl[pj]&&<Eb key={pj}><Project list={fl} i={pj} setI={setPj} onClose={()=>setPj(null)}/></Eb>}
 </>}
